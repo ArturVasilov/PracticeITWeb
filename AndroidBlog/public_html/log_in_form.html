@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Log in</title>
+    <link rel="stylesheet" type="text/css" href="css/log_in.css">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic,600' rel='stylesheet' type='text/css'>
+    <link href="//netdna.bootstrapcdn.com/font-awesome/3.1.1/css/font-awesome.css" rel="stylesheet">
+</head>
+<body>
+
+<script type="text/javascript" src="js/log_in.js"></script>
+
+<div class="testbox" id="log_in_div">
+    <form id="log_in" name="log_in" action="php/LogIn.php">
+        <label id="icon" for="email"><i class="icon-envelope"></i></label>
+        <input type="text" name="email" id="email" placeholder="Email" required/>
+        <label id="icon" for="password"><i class="icon-shield"></i></label>
+        <input type="password" name="password" id="password" placeholder="Password" required/>
+        <a class="button" onclick="if (validate_form()) document.forms['log_in'].submit()">Log in</a>
+    </form>
+</div>
+
+</body>
+</html>

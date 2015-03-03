@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Sign up</title>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic,600' rel='stylesheet' type='text/css'>
+    <link href="//netdna.bootstrapcdn.com/font-awesome/3.1.1/css/font-awesome.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="css/registration.css">
+</head>
+<body>
+
+<script type="text/javascript" src="js/registration_validator.js"></script>
+
+<div class="testbox">
+    <h1>Registration</h1>
+
+    <form id="main" name="main" method="post" action="php/SignUp.php">
+        <hr>
+        <label id="icon" for="email"><i class="icon-envelope"></i></label>
+        <input type="text" name="email" id="email" placeholder="Email" onchange="validate_email()" required/>
+        <label id="icon" for="name"><i class="icon-user"></i></label>
+        <input type="text" name="name" id="name" placeholder="Name" onchange="validate_name()" required/>
+        <label id="icon" for="password"><i class="icon-shield"></i></label>
+        <input type="password" name="password" id="password" placeholder="Password" onchange="validate_password()" required/>
+        <p>By clicking Register, you agree on our <a href="terms_and_conditions.html">terms and condition</a>.</p>
+        <a class="button" onclick="if (validate_form()) document.forms['main'].submit()">Register</a>
+    </form>
+</div>
+</body>
+</html>
