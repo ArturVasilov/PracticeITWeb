@@ -7,7 +7,8 @@ class DatabaseConstants
     public static $RESPONSE = "response";
 
     public static $ERROR_NO_ERRORS = 0;
-    public static $ERROR_PARAMS_TOKEN = "token";
+    public static $ERROR_PARAMS_TOKEN = "token_error";
+    public static $ERROR_SAME_LOGIN = "login_error";
 
     public static $ERROR_RECORD_NOT_FOUND = 404;
 

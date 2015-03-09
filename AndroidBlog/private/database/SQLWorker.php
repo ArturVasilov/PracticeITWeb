@@ -10,7 +10,6 @@ class SQlWorker
     private $transaction = false;
 
     private static $instance = false;
-    private static $countQueries = 0;
 
     public $result;
 
@@ -47,16 +46,13 @@ class SQlWorker
         return $this;
     }
 
-    public function query($sQuery, &$insertId = 0, $delayed = false)
+    public function query($sQuery, &$insertId = 0)
     {
-        self::$countQueries++;
-
         if (!$this->result = $this->engine->query($sQuery, $insertId)) {
             if ($this->transaction) {
                 $this->engine->query("ROLLBACK");
                 $this->transaction = false;
             }
-            throw new Exception ('MySQL error: ' . $this->engine->error . "\nQuery:" . $sQuery);
         }
 
         $insertId = $this->engine->insert_id;

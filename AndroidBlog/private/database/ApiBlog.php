@@ -2,6 +2,7 @@
 
 require_once('ApiBase.php');
 require_once('SQLWorker.php');
+require_once('DatabaseConstants.php');
 
 class ApiBlog extends ApiBase
 {
@@ -79,9 +80,35 @@ class ApiBlog extends ApiBase
      */
     public function registerPerson($methodParams)
     {
-        //here we get
         $response = $this->createDefaultJson();
-        $response->response = 'error';
+
+        if (isset($methodParams->token) && $methodParams->token == API_PASS) {
+            $this->sqlWorker = SQLWorker::getInstance();
+            $this->sqlWorker->loadEngine();
+
+            $query = "SELECT `email` FROM `users` WHERE `email`='" .
+                $this->sqlWorker->escape_string($methodParams->email) . "' LIMIT 1";
+            $this->sqlWorker->query($query);
+
+            if ($this->sqlWorker->num_rows() === 1) {
+                $response->error = DatabaseConstants::$ERROR_SAME_LOGIN;
+                return $response;
+            }
+
+            $id = 0;
+            $query = "INSERT INTO `users` (`email`, `name`, `password`, `status`)
+                            VALUES ('" .
+                $this->sqlWorker->escape_string($methodParams->email) . "', '" .
+                $this->sqlWorker->escape_string($methodParams->name) . "', '" .
+                sha1($this->sqlWorker->escape_string($methodParams->password)) . "', 'user'" . ");";
+            $this->sqlWorker->query($query, $id);
+
+            $response->id = $id;
+        }
+        else {
+            $response->error = DatabaseConstants::$ERROR_PARAMS_TOKEN;
+        }
+
         return $response;
     }
 
@@ -92,7 +119,29 @@ class ApiBlog extends ApiBase
     public function logInPerson($methodParams)
     {
         $response = $this->createDefaultJson();
-        //TODO
+
+        if (isset($methodParams->token) && $methodParams->token == API_PASS) {
+            $this->sqlWorker = SQLWorker::getInstance();
+            $this->sqlWorker->loadEngine();
+
+            $query = "SELECT `id` FROM `users` WHERE `email`='" .
+                $this->sqlWorker->escape_string($methodParams->email) . "' AND `password`='" .
+                sha1($this->sqlWorker->escape_string($methodParams->password)) . "'";
+            $this->sqlWorker->query($query);
+
+            if ($this->sqlWorker->num_rows() === 0) {
+                $response->result = "error";
+            }
+            else {
+                while ($row = $this->sqlWorker->fetch_row()) {
+                    $response->result = $row[0];
+                }
+            }
+        }
+        else {
+            $response->result = DatabaseConstants::$ERROR_PARAMS_TOKEN;
+        }
+
         return $response;
     }
 
