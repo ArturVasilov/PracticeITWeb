@@ -27,9 +27,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo "<a href='".$link."'>Назад</a>";
     }
     else {
-        $_SESSION["email"] = $email;
-        $_SESSION["id"] = $result->result;
-        $_SESSION["status"] = 'user';
+        $_SESSION['email'] = $email;
+        $_SESSION['id'] = $result->result;
+        $_SESSION['status'] = 'user';
+        $_SESSION['password'] = $password;
 
         $link = "index.html";
         echo "<a href='".$link."'>На главную</a>";

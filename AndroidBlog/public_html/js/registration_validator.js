@@ -25,6 +25,7 @@ function validate_email() {
 }
 
 function validate_name() {
+    //TODO: remove first and last spaces in input
     var name_edit = document.forms["main"]["name"];
     var x = name_edit.value;
     if (x == null || x.length < 5) {

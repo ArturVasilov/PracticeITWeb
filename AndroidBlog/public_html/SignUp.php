@@ -32,10 +32,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
     else {
-        $_SESSION["email"] = $email;
-        $_SESSION["name"] = $name;
-        $_SESSION["id"] = $result->id;
-        $_SESSION["status"] = 'user';
+        $_SESSION['email'] = $email;
+        $_SESSION['name'] = $name;
+        $_SESSION['id'] = $result->id;
+        $_SESSION['status'] = 'user';
+        $_SESSION['password'] = $password;
 
         $link = "index.html";
         echo "<a href='".$link."'>На главную</a>";

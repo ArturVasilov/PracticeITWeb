@@ -18,14 +18,12 @@ class ApiBlog extends ApiBase
     {
         $response = $this->createDefaultJson();
         if (isset($methodParams->token) && $methodParams->token == API_PASS) {
+
             $this->sqlWorker = SQlWorker::getInstance();
             $this->sqlWorker->loadEngine();
-            //TODO
-            $query = "SELECT " . ApiConstants::$ARTICLES_ID . ", "
-                . ApiConstants::$ARTICLES_TITLE . ", "
-                . ApiConstants::$ARTICLES_SHORT_DESCRIPTION . ", "
-                . ApiConstants::$ARTICLES_URL . ", "
-                . ApiConstants::$ARTICLES_DATE . " FROM " . ApiConstants::$ARTICLES;
+
+            $query = "SELECT `id`, `title`, `short_description`, `url`, `date`
+                FROM `articles`";
             $this->sqlWorker->query($query);
 
             $data = array();
@@ -48,7 +46,23 @@ class ApiBlog extends ApiBase
     public function getArticleById($methodParams)
     {
         $response = $this->createDefaultJson();
-        //TODO
+        if (isset($methodParams->token) && $methodParams->token == API_PASS
+            && isset($methodParams->id)) {
+
+            $this->sqlWorker = SQlWorker::getInstance();
+            $this->sqlWorker->loadEngine();
+
+            $query = "SELECT `id`, `title`, `short_description`, `url`, `date`
+                FROM `articles` WHERE `id`='" . $methodParams->id . "' LIMIT 1";
+            $this->sqlWorker->query($query);
+
+            while($row = $this->sqlWorker->fetch_row()){
+                $response->result = $row;
+            }
+        }
+        else {
+            $response->errorno = DatabaseConstants::$ERROR_PARAMS_TOKEN;
+        }
         return $response;
     }
 
@@ -59,7 +73,24 @@ class ApiBlog extends ApiBase
     public function allUsers($methodParams)
     {
         $response = $this->createDefaultJson();
-        //TODO
+        if (isset($methodParams->token) && $methodParams->token == API_PASS) {
+
+            $this->sqlWorker = SQlWorker::getInstance();
+            $this->sqlWorker->loadEngine();
+
+            $query = "SELECT `id`, `email`, `name` FROM `users`";
+            $this->sqlWorker->query($query);
+
+            $data = array();
+            while($row = $this->sqlWorker->fetch_row()){
+                $data[] = $row;
+            }
+
+            $response->answer = $data;
+        }
+        else {
+            $response->errorno = DatabaseConstants::$ERROR_PARAMS_TOKEN;
+        }
         return $response;
     }
 
@@ -70,7 +101,23 @@ class ApiBlog extends ApiBase
     public function getUserById($methodParams)
     {
         $response = $this->createDefaultJson();
-        //TODO
+        if (isset($methodParams->token) && $methodParams->token == API_PASS
+            && isset($methodParams->id)) {
+
+            $this->sqlWorker = SQlWorker::getInstance();
+            $this->sqlWorker->loadEngine();
+
+            $query = "SELECT `id`, `email`, `name`
+              FROM `users` WHERE `id`='" . $methodParams->id . "' LIMIT 1";
+            $this->sqlWorker->query($query);
+
+            while($row = $this->sqlWorker->fetch_row()){
+                $response->result = $row;
+            }
+        }
+        else {
+            $response->errorno = DatabaseConstants::$ERROR_PARAMS_TOKEN;
+        }
         return $response;
     }
 
@@ -152,7 +199,35 @@ class ApiBlog extends ApiBase
     public function addComment($methodParams)
     {
         $response = $this->createDefaultJson();
-        //TODO
+
+        if (isset($methodParams->token) && $methodParams->token == API_PASS) {
+            $this->sqlWorker = SQLWorker::getInstance();
+            $this->sqlWorker->loadEngine();
+
+            $query = "SELECT `id` FROM `users` WHERE `email`='" .
+                $this->sqlWorker->escape_string($methodParams->email) . "'
+                 AND `password`='" . sha1($this->sqlWorker->escape_string($methodParams->password)) . "' LIMIT 1";
+            $this->sqlWorker->query($query);
+
+            if ($this->sqlWorker->num_rows() !== 1) {
+                $response->error = DatabaseConstants::$ERROR_PARAMS_TOKEN;
+                return $response;
+            }
+
+            $id = 0;
+            $query = "INSERT INTO `comments` (`article_id`, `user_id`, `text`)
+                            VALUES ('" .
+                $this->sqlWorker->escape_string($methodParams->article_id) . "', '" .
+                $this->sqlWorker->escape_string($methodParams->user_id) . "', '" .
+                $this->sqlWorker->escape_string($methodParams->text) . "');";
+            $this->sqlWorker->query($query, $id);
+
+            $response->id = $id;
+        }
+        else {
+            $response->error = DatabaseConstants::$ERROR_PARAMS_TOKEN;
+        }
+
         return $response;
     }
 
@@ -163,7 +238,25 @@ class ApiBlog extends ApiBase
     public function getArticlesVotes($methodParams)
     {
         $response = $this->createDefaultJson();
-        //TODO
+        if (isset($methodParams->token) && $methodParams->token == API_PASS) {
+
+            $this->sqlWorker = SQlWorker::getInstance();
+            $this->sqlWorker->loadEngine();
+
+            $query = "SELECT `id`, `user_id`, `rating` FROM `votes`
+              WHERE `article_id`='" . $this->sqlWorker->escape_string($methodParams->article_id) . "'";
+            $this->sqlWorker->query($query);
+
+            $data = array();
+            while($row = $this->sqlWorker->fetch_row()){
+                $data[] = $row;
+            }
+
+            $response->answer = $data;
+        }
+        else {
+            $response->errorno = DatabaseConstants::$ERROR_PARAMS_TOKEN;
+        }
         return $response;
     }
 
@@ -174,7 +267,25 @@ class ApiBlog extends ApiBase
     public function getCommentVotes($methodParams)
     {
         $response = $this->createDefaultJson();
-        //TODO
+        if (isset($methodParams->token) && $methodParams->token == API_PASS) {
+
+            $this->sqlWorker = SQlWorker::getInstance();
+            $this->sqlWorker->loadEngine();
+
+            $query = "SELECT `id`, `user_id`, `rating` FROM `votes`
+              WHERE `comment_id`='" . $this->sqlWorker->escape_string($methodParams->article_id) . "'";
+            $this->sqlWorker->query($query);
+
+            $data = array();
+            while($row = $this->sqlWorker->fetch_row()){
+                $data[] = $row;
+            }
+
+            $response->answer = $data;
+        }
+        else {
+            $response->errorno = DatabaseConstants::$ERROR_PARAMS_TOKEN;
+        }
         return $response;
     }
 
@@ -185,7 +296,48 @@ class ApiBlog extends ApiBase
     public function vote($methodParams)
     {
         $response = $this->createDefaultJson();
-        //TODO
+
+        if (isset($methodParams->token) && $methodParams->token == API_PASS) {
+            $this->sqlWorker = SQLWorker::getInstance();
+            $this->sqlWorker->loadEngine();
+
+            $query = "SELECT `id` FROM `users` WHERE `email`='" .
+                $this->sqlWorker->escape_string($methodParams->email) . "'
+                 AND `password`='" . sha1($this->sqlWorker->escape_string($methodParams->password)) . "' LIMIT 1";
+            $this->sqlWorker->query($query);
+
+            if ($this->sqlWorker->num_rows() !== 1) {
+                $response->error = DatabaseConstants::$ERROR_PARAMS_TOKEN;
+                return $response;
+            }
+
+            $id = 0;
+            $query = "";
+            if (isset($methodParams->article_id)) {
+                $query = "INSERT INTO `votes` (`article_id`, `user_id`, `rating`)
+                            VALUES ('" .
+                    $this->sqlWorker->escape_string($methodParams->article_id) . "', '" .
+                    $this->sqlWorker->escape_string($methodParams->user_id) . "', '" .
+                    $this->sqlWorker->escape_string($methodParams->rating) . "');";
+            }
+            else if(isset($methodParams->comment_id)) {
+                $query = "INSERT INTO `votes` (`comment_id`, `user_id`, `rating`)
+                            VALUES ('" .
+                    $this->sqlWorker->escape_string($methodParams->comment_id) . "', '" .
+                    $this->sqlWorker->escape_string($methodParams->user_id) . "', '" .
+                    $this->sqlWorker->escape_string($methodParams->rating) . "');";
+            }
+            else {
+                $response->error = DatabaseConstants::$ERROR_PARAMS_TOKEN;
+            }
+            $this->sqlWorker->query($query, $id);
+
+            $response->id = $id;
+        }
+        else {
+            $response->error = DatabaseConstants::$ERROR_PARAMS_TOKEN;
+        }
+
         return $response;
     }
 }
