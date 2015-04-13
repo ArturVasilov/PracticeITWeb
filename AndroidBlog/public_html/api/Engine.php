@@ -1,5 +1,7 @@
 <?php
 
+require_once('DatabaseConstants.php');
+
 class Engine
 {
     private $apiFunctionName;
@@ -31,7 +33,7 @@ class Engine
     function callApiFunction()
     {
         $resultFunctionCall = $this->createDefaultJson();
-        $apiName = strtolower($this->apiFunctionName[0]);
+        $apiName = $this->apiFunctionName[0];
         if (file_exists($apiName . '.php')) {
             $apiClass = Engine::getApiEngineByName($apiName);
             $apiReflection = new ReflectionClass($apiName);

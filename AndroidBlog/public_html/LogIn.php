@@ -1,6 +1,8 @@
 <?php
 
-include_once("Z:/home/localhost/www/Artur/AndroidBlog/private/database/ApiBlog.php");
+require_once('SessionManager.php');
+require_once('api/ApiBlog.php');
+require_once('api/DatabaseConstants.php');
 
 $email = $password = "";
 
@@ -16,24 +18,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $result = $blog->logInPerson($params);
 
-    if ($result->result === 'error') {
-        echo("Failed to log in you</br>");
-        $link = "log_in_form.html";
-        echo "<a href='".$link."'>Назад</a>";
-    }
-    else if ($result->result === DatabaseConstants::$ERROR_PARAMS_TOKEN) {
-        echo("Failed to log in you</br>");
-        $link = "log_in_form.html";
-        echo "<a href='".$link."'>Назад</a>";
-    }
-    else {
-        $_SESSION['email'] = $email;
-        $_SESSION['id'] = $result->result;
-        $_SESSION['status'] = 'user';
-        $_SESSION['password'] = $password;
+    if ($result->answer === DatabaseConstants::$ANSWER_OK) {
+        $manager = SessionManager::getInstance();
+        $manager->loadSession();
+        $manager->uploadUser($result->id, $email, $password, $result->name);
 
-        $link = "index.html";
-        echo "<a href='".$link."'>На главную</a>";
+        $link = "index.php";
+        echo "<a href='".$link."'>Homepage</a>";
+    }
+    elseif ($result->answer === DatabaseConstants::$ANSWER_FAIL) {
+        if ($result->error === DatabaseConstants::$ERROR_LOG_IN) {
+            echo("No such email or irregular password</br>");
+            $link = "log_in_form.html";
+            echo "<a href='" . $link . "'>Back</a>";
+        }
+        else {
+            echo("Failed to log in you</br>");
+            $link = "log_in_form.html";
+            echo "<a href='" . $link . "'>Back</a>";
+        }
     }
 }
 

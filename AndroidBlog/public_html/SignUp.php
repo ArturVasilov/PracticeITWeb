@@ -1,6 +1,8 @@
 <?php
 
-include_once("Z:/home/localhost/www/Artur/AndroidBlog/private/database/ApiBlog.php");
+require_once('SessionManager.php');
+require_once('api/ApiBlog.php');
+require_once('api/DatabaseConstants.php');
 
 $name = $password = $email = "";
 
@@ -14,32 +16,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $params = json_decode('{}');
     $params->token = API_PASS;
     $params->email = $email;
-    $params->name = $name;
     $params->password = $password;
+    $params->name = $name;
 
     $result = $blog->registerPerson($params);
 
-    if (isset($result->error)) {
+    if ($result->answer === DatabaseConstants::$ANSWER_OK) {
+        $manager = SessionManager::getInstance();
+        $manager->loadSession();
+        $manager->uploadUser($result->id, $email, $password, $name);
+
+        $link = "index.php";
+        echo "<a href='".$link."'>Homepage</a>";
+    }
+    elseif (isset($result->error)) {
         if ($result->error === DatabaseConstants::$ERROR_SAME_LOGIN) {
             echo("Such email is already exist</br>");
             $link = "registration_form.html";
-            echo "<a href='".$link."'>Назад</a>";
+            echo "<a href='".$link."'>Back</a>";
         }
         else if ($result->error === DatabaseConstants::$ERROR_PARAMS_TOKEN) {
             echo("Failed to register you</br>");
             $link = "registration_form.html";
-            echo "<a href='".$link."'>Назад</a>";
+            echo "<a href='".$link."'>Back</a>";
         }
-    }
-    else {
-        $_SESSION['email'] = $email;
-        $_SESSION['name'] = $name;
-        $_SESSION['id'] = $result->id;
-        $_SESSION['status'] = 'user';
-        $_SESSION['password'] = $password;
-
-        $link = "index.html";
-        echo "<a href='".$link."'>На главную</a>";
     }
 }
 
