@@ -6,6 +6,7 @@ require_once('api/DatabaseConstants.php');
 $article_id = $comment_id = $user_id = $rating = $password = $article_url = null;
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    echo "posting vote";
     if (isset($_POST['article_id'])) {
         $article_id = escape($_POST['article_id']);
     }
@@ -15,7 +16,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     else {
         echo("Failed to vote</br>");
         echo "<a href='".$article_url."'>Back to article</a>";
+        return;
     }
+    session_start();
     $user_id = escape($_SESSION['id']);
     $rating = escape($_POST['rating']);
     $email = escape($_SESSION['email']);

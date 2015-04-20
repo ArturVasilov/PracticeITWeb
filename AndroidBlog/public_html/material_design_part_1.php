@@ -206,7 +206,7 @@ if ($sessionManager->active()) {
 }
 else {
     $logIn = "log_in_form.html";
-    echo "<a href='" . $link . "'>Log in to post comments</a>";
+    echo "<a href='" . $logIn . "'>Log in to post comments</a>";
 }
 ?>
 

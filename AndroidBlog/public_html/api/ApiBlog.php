@@ -461,8 +461,7 @@ class ApiBlog extends ApiBase
                     AND `user_id`='" . $this->sqlWorker->escape_string($methodParams->user_id) . "' LIMIT 1";
                 $this->sqlWorker->query($query);
 
-                if ($this->sqlWorker->num_rows() !== 1) {
-                    $response->error = DatabaseConstants::$ERROR_PARAMS_TOKEN;
+                if ($this->sqlWorker->num_rows() >= 1) {
                     $remove_query = "DELETE FROM `votes` WHERE `article_id`='" .
                         $this->sqlWorker->escape_string($methodParams->article_id) . "'
                         AND `user_id`='" . $this->sqlWorker->escape_string($methodParams->user_id) . "'";
@@ -482,8 +481,7 @@ class ApiBlog extends ApiBase
                     AND `user_id`='" . $this->sqlWorker->escape_string($methodParams->user_id) . "' LIMIT 1";
                 $this->sqlWorker->query($query);
 
-                if ($this->sqlWorker->num_rows() !== 1) {
-                    $response->error = DatabaseConstants::$ERROR_PARAMS_TOKEN;
+                if ($this->sqlWorker->num_rows() >= 1) {
                     $remove_query = "DELETE FROM `votes` WHERE `comment_id`='" .
                         $this->sqlWorker->escape_string($methodParams->comment_id) . "'
                         AND `user_id`='" . $this->sqlWorker->escape_string($methodParams->user_id) . "'";
