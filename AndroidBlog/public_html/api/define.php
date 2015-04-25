@@ -1,6 +1,6 @@
 <?php
-define('DB_HOST', 'mysql46.1gb.ru');
-define('DB_USER', 'gb_z_andro4ff');
-define('DB_PASS', '1086a7556wr');
-define('DB_NAME', 'gb_z_andro4ff');
-define('API_PASS', 'kktb56yjdfg3691ubmpd0qhd');
+define('DB_HOST', /* here must be database host, e.g. localhost */);
+define('DB_USER', /* here must be database username */);
+define('DB_PASS', /* here must be database password */);
+define('DB_NAME', /* here must be database name */);
+define('API_PASS', /* here must be special password for using API */);
